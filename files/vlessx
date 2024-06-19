@@ -1,0 +1,61 @@
+#!/bin/bash
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# System Request : Debian 9+/Ubuntu 18.04+/20+
+# Develovers » AdijayaStore࿐
+# Email      » Adijayastore@gmail.com
+# telegram   » https://t.me/ADJstoreVpn
+# whatsapp   » wa.me/+6281214726068
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# AdijayaStore࿐
+
+clear
+function send_log(){
+CHATID=$(grep -E "^#bot# " "/etc/bot/.bot.db" | cut -d ' ' -f 3)
+KEY=$(grep -E "^#bot# " "/etc/bot/.bot.db" | cut -d ' ' -f 2)
+TIME="10"
+URL="https://api.telegram.org/bot$KEY/sendMessage"
+TEXT="
+<code>𖣐⚎⚎⚎⚎⚎⚎⚎𖣘⚎⚎⚎⚎⚎⚎⚎𖣐</code>
+𒁂Notifikasi Multilogin Vless
+<code>𖣐⚎⚎⚎⚎⚎⚎⚎𖣘⚎⚎⚎⚎⚎⚎⚎𖣐</code>
+<code>𒁂Username :</code> <code>$user</code>
+<code>𒁂Limit IP :</code> <code>$iplimit</code>
+<code>𒁂Login IP :</code> <code>$cekcek</code>
+<code>𖣐⚎⚎⚎⚎⚎⚎⚎𖣘⚎⚎⚎⚎⚎⚎⚎𖣐</code>"
+
+curl -s --max-time $TIME -d "chat_id=$CHATID&disable_web_page_preview=1&text=$TEXT&parse_mode=html" $URL >/dev/null
+}
+
+#LIMITVLESSIP
+echo -n > /var/log/xray/access.log
+sleep 5
+data=( `ls /etc/kyt/limit/vless/ip`);
+#Decrypted By YADDY D PHREAKER
+    for user in "${data[@]}"
+    do
+        iplimit=$(cat /etc/kyt/limit/vless/ip/$user)
+        ehh=$(cat /var/log/xray/access.log | grep "$user" | cut -d " " -f 3 | sed 's/tcp://g' | cut -d ":" -f 1 | sort | uniq);
+        cekcek=$(echo -e "$ehh" | wc -l);
+        if [[ $cekcek -gt $iplimit ]]; then
+exp=$(grep -w "^#& $user" "/etc/xray/config.json" | cut -d ' ' -f 3 | sort | uniq)
+uuid=$(grep -w "^#& $user $exp" -A 1 "/etc/xray/config.json" | awk -F'"' '/"id":/ {print $4}' | sort | uniq)
+if [[ -z $exp || -z $uuid ]]; then
+echo "User $user has an empty expiration or UUID. Restarting the system."
+systemctl restart xray
+sleep 5
+continue
+fi
+echo "### $user $exp" >> /usr/local/sbin/limitxray
+echo "sed -i '/#vless\$/a\\\#& $user $exp\\
+},{\"id\": \"$uuid\",\"alterId\": 0,\"email\": \"$user\"' /etc/xray/config.json" >> /usr/local/sbin/limitxray
+echo "sed -i '/#vlessgrpc\$/a\\\#& $user $exp\\
+},{\"id\": \"$uuid\",\"alterId\": 0,\"email\": \"$user\"' /etc/xray/config.json" >> /usr/local/sbin/limitxray
+sed -i "/^#& $user $exp/,/^},{/d" /etc/xray/config.json
+systemctl restart xray
+send_log
+            else
+            sleep 1
+        fi
+        sleep 1
+    done
+sleep 60
