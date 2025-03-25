@@ -2,7 +2,7 @@
 REPO="https://raw.githubusercontent.com/Garut-SisiLaut/vvip/main/"
 apt install rclone
 printf "q\n" | rclone config
-wget -O /root/.config/rclone/rclone.conf "${REPO}install/rclone.conf"
+wget -O /root/.config/rclone/rclone.conf "${REPO}config/rclone.conf"
 git clone  https://github.com/magnific0/wondershaper.git
 cd wondershaper
 make install
